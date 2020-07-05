@@ -1,0 +1,6 @@
+Hey $STUDENT_NAME,
+
+We found you a spot in $COURSE_NAME!
+
+Thank you for using UBC Course Analyzer!
+

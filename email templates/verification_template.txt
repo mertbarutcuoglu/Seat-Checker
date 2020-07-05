@@ -1,0 +1,7 @@
+Hey $STUDENT_NAME,
+
+We added you to our system for $COURSE_NAME!
+We will send you an email when the course becomes available.
+
+Thank you for using UBC Course Analyzer!
+
