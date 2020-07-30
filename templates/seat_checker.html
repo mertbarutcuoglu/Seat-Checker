@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post">
+    {{ form.csrf_token() }}
+    <div class="form-row">
+        <div class="form-group col-6">
+            {{ form.name.label }}
+            {{ form.name(class_="form-control", placeholder='Name') }}
+        </div>
+        <div class="form-group col-6">
+            {{ form.surname.label }}
+            {{ form.surname(class_="form-control", placeholder='Surname') }}
+        </div>
+    </div>
+    <div class="form-group">
+        {{ form.email.label }}
+        {{ form.email(class_="form-control", placeholder='Email') }}
+    </div>
+    <div class="form-row">
+        <div class="form-group col-4">
+            {{ form.subject.label }}
+            {{ form.subject(class_="form-control", placeholder='Subject (CPSC etc.)') }}
+        </div>
+        <div class="form-group col-4">
+            {{ form.course_no.label }}
+            {{ form.course_no(class_="form-control", placeholder='Course No (101 etc.)') }}
+        </div>
+        <div class="form-group col-4">
+            {{ form.course_section.label }}
+            {{ form.course_section(class_="form-control", placeholder='Section (001 etc.)') }}
+        </div>
+    </div>
+    <div class="col-2 mx-auto">
+        {{ form.submit_button(class_= "btn btn-primary mx-auto") }}
+    </div>
+</form>
+{% endblock %}

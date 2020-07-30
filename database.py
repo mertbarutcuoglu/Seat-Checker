@@ -5,8 +5,8 @@ import pickle
 import os
 
 client = MongoClient(os.environ['MONGODB_HOST_NAME'])
-db = client['seatChecker']
-collection = db['courses']
+db = client[os.environ['MONGODB_DB_NAME']]
+collection = db[os.environ['MONGODB_COLLECTION_NAME']]
 
 
 def add_student_to_course(course, student):
