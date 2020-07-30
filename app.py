@@ -44,12 +44,12 @@ def home():
 
         new_course = Course(course_name, course_number, course_section)
 
-        course_status = is_course_available(new_course)  # checks if course is already available or if it is on SSC
-        if course_status != False:
-            if course_status == True:
-                return render_template('error.html', message='Course is already available!')
-            elif course_status == 'Course does not exist!':
-                return render_template('error.html', message=course_status)
+        # course_status = is_course_available(new_course)  # checks if course is already available or if it is on SSC
+        # if course_status != False:
+        #     if course_status == True:
+        #         return render_template('error.html', message='Course is already available!')
+        #     elif course_status == 'Course does not exist!':
+        #         return render_template('error.html', message=course_status)
 
         student_name = results['name']
         student_surname = results['surname']
