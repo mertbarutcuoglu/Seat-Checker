@@ -1,7 +1,7 @@
 import os
 import sys
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template
 from flask_wtf import CSRFProtect
 
 from forms.AddUserForm import AddUserForm
@@ -16,19 +16,28 @@ from requests.exceptions import RequestException
 from socket import gaierror
 import smtplib
 import logging
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
-CORS(app)
-# cors = CORS(app, resources={r"/add/*": {"origins": "https://seatchecker.ubccourseanalyzer.com"}})
+
+cors = CORS(app, resources={r"/": {"origins": "https://seatchecker.ubccourseanalyzer.com"}})
 csrf = CSRFProtect(app)
 
 courses = []
 
 # Logging configuration
-logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+logger = logging.getLogger()
+logger.setLevel(logging.WARNING)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.WARNING)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+
+app.logger.addHandler(ch)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -82,8 +91,7 @@ def home():
         except StudentExistsException:
             return render_template('error.html', message='A student with this email address exists.')
         except Exception as e:
-            #logging.error('Registration error', exc_info=True)
-            sys.stdout.flush()
+            logging.error('Registration error', exc_info=True)
             return render_template('error.html', message='An error occurred during registration. Please try again.')
         return render_template('result.html')
 
@@ -92,10 +100,8 @@ def home():
 
 def check_spots():
     if courses:
-        print('Running...') #For Test
-        sys.stdout.flush()
-
         for course in courses:
+            logging.info('Checking seats...')
             try:
                 if is_course_available(course):
                     for student in course.students:
@@ -103,23 +109,18 @@ def check_spots():
                     remove_course(course)
                     courses.remove(course)
             except RequestException:
-                #logging.error('Error when connecting to SSC', exc_info=True)
-                sys.stdout.flush()
+                logging.error('Error when connecting to SSC', exc_info=True)
             except (gaierror, ConnectionRefusedError):
-                #logging.error('Failed to connect to the server. Bad connection settings?', exc_info=True)
-                sys.stdout.flush()
+                logging.error('Failed to connect to the server. Bad connection settings?', exc_info=True)
             except smtplib.SMTPServerDisconnected:
-                #logging.error('Failed to connect to the server.', exc_info=True)
-                sys.stdout.flush()
+                logging.error('Failed to connect to the server.', exc_info=True)
             except smtplib.SMTPException:
-                #logging.error('SMTP error', exc_info=True)
-                sys.stdout.flush()
+                logging.error('SMTP error', exc_info=True)
             except Exception as e:
-                #logging.error('Error occurred while checking courses', exc_info=True)
-                sys.stdout.flush()
+                logging.error('Error occurred while checking courses', exc_info=True)
 
 scheduler = BackgroundScheduler()
-job = scheduler.add_job(check_spots, 'interval', minutes=1)
+job = scheduler.add_job(check_spots, 'interval', minutes=5)
 scheduler.start()
 
 if __name__ == '__main__':
