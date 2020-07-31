@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
 
-server = smtplib.SMTP(host='smtp.gmail.com', port=587)
+server = smtplib.SMTP(host='smtp.mailgun.org', port=587)
 server.starttls()
 from_email = os.environ['EMAIL_ADDRESS']
 server.login(from_email, os.environ['EMAIL_PASSWORD'])
