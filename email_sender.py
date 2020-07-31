@@ -4,11 +4,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
 
-server = smtplib.SMTP(host='smtp.mailgun.org', port=587)
-server.starttls()
-from_email = os.environ['EMAIL_ADDRESS']
-server.login(from_email, os.environ['EMAIL_PASSWORD'])
-
 
 def get_custom_email(student, course, template):
     if template == 'verification':
@@ -23,6 +18,14 @@ def get_custom_email(student, course, template):
 
 
 def send_email(student, course, purpose):
+    server = smtplib.SMTP(host='smtp.mailgun.org', port=587)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    from_email = os.environ['EMAIL_ADDRESS']
+    email_password = os.environ['EMAIL_PASSWORD']
+    server.login(from_email, email_password)
+
     body = get_custom_email(student, course, purpose)
     message = MIMEMultipart()
 
@@ -38,3 +41,4 @@ def send_email(student, course, purpose):
     message.attach(MIMEText(body, 'plain'))
 
     server.send_message(message)
+    server.quit()
