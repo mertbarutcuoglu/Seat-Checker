@@ -98,7 +98,6 @@ def home():
 
 
 def check_spots():
-    logging.info('Checking seats...')
     if courses:
         for course in courses:
             try:
@@ -120,7 +119,7 @@ def check_spots():
 
 
 scheduler = BackgroundScheduler()
-job = scheduler.add_job(check_spots, 'interval', minutes=1)
+job = scheduler.add_job(check_spots, 'interval', minutes=5)
 scheduler.start()
 
 if __name__ == '__main__':
