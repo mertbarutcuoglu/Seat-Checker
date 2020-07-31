@@ -21,7 +21,6 @@ from flask_cors import CORS
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
-
 cors = CORS(app, resources={r"/": {"origins": "https://seatchecker.ubccourseanalyzer.com"}})
 csrf = CSRFProtect(app)
 
@@ -29,10 +28,10 @@ courses = []
 
 # Logging configuration
 logger = logging.getLogger()
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.INFO)
 
 ch = logging.StreamHandler()
-ch.setLevel(logging.WARNING)
+ch.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
@@ -99,9 +98,9 @@ def home():
 
 
 def check_spots():
+    logging.info('Checking seats...')
     if courses:
         for course in courses:
-            logging.info('Checking seats...')
             try:
                 if is_course_available(course):
                     for student in course.students:
@@ -119,8 +118,9 @@ def check_spots():
             except Exception as e:
                 logging.error('Error occurred while checking courses', exc_info=True)
 
+
 scheduler = BackgroundScheduler()
-job = scheduler.add_job(check_spots, 'interval', minutes=5)
+job = scheduler.add_job(check_spots, 'interval', minutes=1)
 scheduler.start()
 
 if __name__ == '__main__':
