@@ -1,4 +1,5 @@
 import os
+import sys
 
 from flask import Flask, request, jsonify, render_template
 from flask_wtf import CSRFProtect
@@ -81,7 +82,8 @@ def home():
         except StudentExistsException:
             return render_template('error.html', message='A student with this email address exists.')
         except Exception as e:
-            logging.error('Registration error', exc_info=True)
+            #logging.error('Registration error', exc_info=True)
+            sys.stdout.flush()
             return render_template('error.html', message='An error occurred during registration. Please try again.')
         return render_template('result.html')
 
@@ -99,16 +101,20 @@ def check_spots():
                     remove_course(course)
                     courses.remove(course)
             except RequestException:
-                logging.error('Error when connecting to SSC', exc_info=True)
+                #logging.error('Error when connecting to SSC', exc_info=True)
+                sys.stdout.flush()
             except (gaierror, ConnectionRefusedError):
-                logging.error('Failed to connect to the server. Bad connection settings?', exc_info=True)
+                #logging.error('Failed to connect to the server. Bad connection settings?', exc_info=True)
+                sys.stdout.flush()
             except smtplib.SMTPServerDisconnected:
-                logging.error('Failed to connect to the server.', exc_info=True)
+                #logging.error('Failed to connect to the server.', exc_info=True)
+                sys.stdout.flush()
             except smtplib.SMTPException:
-                logging.error('SMTP error', exc_info=True)
+                #logging.error('SMTP error', exc_info=True)
+                sys.stdout.flush()
             except Exception as e:
-                logging.error('Error occurred while checking courses', exc_info=True)
-
+                #logging.error('Error occurred while checking courses', exc_info=True)
+                sys.stdout.flush()
 
 scheduler = BackgroundScheduler()
 job = scheduler.add_job(check_spots, 'interval', minutes=1)
