@@ -93,6 +93,8 @@ def home():
 def check_spots():
     if courses:
         print('Running...') #For Test
+        sys.stdout.flush()
+
         for course in courses:
             try:
                 if is_course_available(course):
